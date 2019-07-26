@@ -28,6 +28,6 @@ app.use('/graphql',cors(), graphqlHTTP({
 }));
 
 // Creates an HTTP server and returns the instance.
-app.listen(4000, () => {
+app.listen(process.env.PORT, () => {
     console.log('now listening to requests on port 4000')
 });

@@ -4,6 +4,10 @@
 
 const graphql = require('graphql');
 const Word = require('../models/hero');
+const express = require('express');
+const router = express.Router();
+var monk = require('monk');
+const db = monk('localhost:27017/mappingDB');
 
 const{
      GraphQLObjectType, 
@@ -13,7 +17,28 @@ const{
      GraphQLNonNull
 } = graphql;
 
+router.get('/userlist', function(req, res) {
+    var db = req.db;
+    var collection = db.get('usercollection');
+    collection.find({},{},function(e,docs){
+        res.render('userlist', {
+            "userlist" : docs
+        });
+    });
+    
+});
+
 //Defines the types of the hero 
+const TestType = new GraphQLObjectType({
+    name: 'test',
+    // Defines the attributes contained within the fields of word
+    fields: () => ({
+        _id: {type: GraphQLString},
+        username: {type: GraphQLString},
+        email: {type: GraphQLString},
+    })
+});
+
 const WordType = new GraphQLObjectType({
     name: 'word',
     // Defines the attributes contained within the fields of word
@@ -48,6 +73,15 @@ const RootQuery = new GraphQLObjectType({
             type: new GraphQLList(WordType),
             resolve(parent, args){
                 return Word.find();
+            }
+        },
+
+        //Returns user from test DB
+        test: {
+            type: new GraphQLList(TestType),
+            resolve(parent, args){
+                var collection = db.get('usercollection');
+                return collection.find();
             }
         }
     }

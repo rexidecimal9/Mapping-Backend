@@ -5,12 +5,19 @@ const express = require('express');
 const graphqlHTTP = require('express-graphql');
 const schema = require('./schema/schema');
 const mongoose = require('mongoose');
+var path = require('path');
 const cors = require('cors');
+
+// Monk acts as middleware to the dtabase
+var monk = require('monk');
+// initialize the db variable as our database, MongoDB does not need to be opened and closed
+// this will not affect performance
+var db = monk('localhost:27017/mappingDB');
 
 // The app object is instantiated on creation of the Express server.
 const app = express();
 // Creates permission to let the localhost:4200 have access to the resources of the server.
-app.options('localhost:4200', cors());
+app.options('localhost:3000', cors());
 
 // Uses mongoose as the intermediary between GraphQL and MongoDb.
 // Creating a connection the the MongoDB using the URL.
@@ -21,6 +28,12 @@ mongoose.connection.once('open', () => {
     console.log('connected to database');
 })
 
+// Make our db accessible to our router, must be above 
+app.use(function(req,res,next){
+    req.db = db;
+    next();
+});
+
 // Adds the middleware layer to the Express middleware stack.
 app.use('/graphql',cors(), graphqlHTTP({
     schema,
@@ -28,6 +41,6 @@ app.use('/graphql',cors(), graphqlHTTP({
 }));
 
 // Creates an HTTP server and returns the instance.
-app.listen(process.env.PORT, () => {
-    console.log('now listening to requests on port 4000')
+app.listen(3000, () => {
+    console.log('now listening to requests on port 3000')
 });

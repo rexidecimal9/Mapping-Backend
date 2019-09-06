@@ -3,37 +3,30 @@
 */
 
 const graphql = require('graphql');
-const Word = require('../models/hero');
+const Word = require('../models/words');
+const Test = require('../models/test');
 const express = require('express');
-const router = express.Router();
-var monk = require('monk');
-const db = monk('localhost:27017/mappingDB');
+// const router = express.Router();
+// var monk = require('monk');
+// const db = monk('localhost:27017/test');
+const uuid = require('uuid/v4');
 
+
+// Initalize all Graphql types
 const{
-     GraphQLObjectType, 
+     GraphQLObjectType,
      GraphQLString,
      GraphQLSchema,
      GraphQLList,
-     GraphQLNonNull
+     GraphQLNonNull,
+     GraphQLID
 } = graphql;
-
-router.get('/userlist', function(req, res) {
-    var db = req.db;
-    var collection = db.get('usercollection');
-    collection.find({},{},function(e,docs){
-        res.render('userlist', {
-            "userlist" : docs
-        });
-    });
-    
-});
 
 //Defines the types of the hero 
 const TestType = new GraphQLObjectType({
     name: 'test',
-    // Defines the attributes contained within the fields of word
     fields: () => ({
-        _id: {type: GraphQLString},
+        id: {type: GraphQLString},
         username: {type: GraphQLString},
         email: {type: GraphQLString},
     })
@@ -41,7 +34,6 @@ const TestType = new GraphQLObjectType({
 
 const WordType = new GraphQLObjectType({
     name: 'word',
-    // Defines the attributes contained within the fields of word
     fields: () => ({
         name: {type: GraphQLString},
         category: {type: GraphQLString},
@@ -80,8 +72,9 @@ const RootQuery = new GraphQLObjectType({
         test: {
             type: new GraphQLList(TestType),
             resolve(parent, args){
-                var collection = db.get('usercollection');
-                return collection.find();
+                return Test.find();
+                // const collection = db.get('usercollection');
+                // return collection.find();
             }
         }
     }
@@ -133,7 +126,25 @@ const Mutation = new GraphQLObjectType({
                 word.category = args.category;
                 return word.save();
             }
-        }
+        },
+        addTest:{
+            type: TestType,
+            args:{
+                username: {type: new GraphQLNonNull(GraphQLString)},
+                email: {type: new GraphQLNonNull(GraphQLString)}
+            },
+            resolve(parent, args){
+                let test = new Test({
+                    id: uuid(),
+                    username: args.username,
+                    email: args.email,
+                });
+                return test.save();
+                // const collection = db.get('usercollection');
+                // collection.insert(data);
+                // return collection.findOne({"id": data.id});
+            }
+        },
     }
 });
 

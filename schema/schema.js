@@ -5,6 +5,7 @@
 const graphql = require('graphql');
 const Word = require('../models/words');
 const Test = require('../models/test');
+const Location = require('../models/location')
 const express = require('express');
 // const router = express.Router();
 // var monk = require('monk');
@@ -19,7 +20,8 @@ const{
      GraphQLSchema,
      GraphQLList,
      GraphQLNonNull,
-     GraphQLID
+     GraphQLID,
+     GraphQLFloat,
 } = graphql;
 
 //Defines the types of the hero 
@@ -38,6 +40,17 @@ const WordType = new GraphQLObjectType({
         name: {type: GraphQLString},
         category: {type: GraphQLString},
         part: {type: GraphQLString},
+    })
+});
+
+const LoactionType = new GraphQLObjectType({
+    name: 'location',
+    fields: () => ({
+        id: {type: GraphQLString},
+        longitude: {type: GraphQLFloat},
+        lattitude: {type: GraphQLFloat},
+        name: {type: GraphQLString},
+        description: {type: GraphQLString},
     })
 });
 
@@ -75,6 +88,13 @@ const RootQuery = new GraphQLObjectType({
                 return Test.find();
                 // const collection = db.get('usercollection');
                 // return collection.find();
+            }
+        },
+
+        locations: {
+            type: new GraphQLList(LoactionType),
+            resolve(parent, args){
+                return Location.find();
             }
         }
     }
@@ -145,6 +165,25 @@ const Mutation = new GraphQLObjectType({
                 // return collection.findOne({"id": data.id});
             }
         },
+        addLocation: {
+            type: TestType,
+            args: {
+                longitude: {type: GraphQLFloat},
+                lattitude: {type: GraphQLFloat},
+                name: {type: GraphQLString},
+                description: {type: GraphQLString},
+            },
+            resolve(parent, args){
+                let location = new Location({
+                    id: uuid(),
+                    lattitude: args.lattitude,
+                    longitude: args.longitude,
+                    name: args.name,
+                    description: args.description
+                });
+                return location.save();
+            }
+        }
     }
 });
 

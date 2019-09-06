@@ -25,34 +25,8 @@ const{
 } = graphql;
 
 //Defines the types of the hero 
-const TestType = new GraphQLObjectType({
-    name: 'test',
-    fields: () => ({
-        id: {type: GraphQLString},
-        username: {type: GraphQLString},
-        email: {type: GraphQLString},
-    })
-});
 
-const WordType = new GraphQLObjectType({
-    name: 'word',
-    fields: () => ({
-        name: {type: GraphQLString},
-        category: {type: GraphQLString},
-        part: {type: GraphQLString},
-    })
-});
 
-const LoactionType = new GraphQLObjectType({
-    name: 'location',
-    fields: () => ({
-        id: {type: GraphQLString},
-        longitude: {type: GraphQLFloat},
-        lattitude: {type: GraphQLFloat},
-        name: {type: GraphQLString},
-        description: {type: GraphQLString},
-    })
-});
 
 // Creating the queries for GraphQL.
 const RootQuery = new GraphQLObjectType({

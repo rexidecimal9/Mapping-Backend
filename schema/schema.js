@@ -5,7 +5,9 @@
 const graphql = require('graphql');
 const Word = require('../models/words');
 const Test = require('../models/test');
-const Location = require('../models/location')
+const Location = require('../models/location');
+const Types = require('../Types/Types');
+const IO = require('../Types/IOTypes');
 const express = require('express');
 // const router = express.Router();
 // var monk = require('monk');
@@ -35,7 +37,7 @@ const RootQuery = new GraphQLObjectType({
         // Returns a List of all words in a particular category
         words: {
             // Defines the type of query.
-            type: WordType,
+            type: Types.WordType,
             // Defines the argument of the query.
             args: {
                 category: {type: GraphQLString},
@@ -49,7 +51,7 @@ const RootQuery = new GraphQLObjectType({
 
         // Returns an array of all the words
         allWords: {
-            type: new GraphQLList(WordType),
+            type: new GraphQLList(Types.WordType),
             resolve(parent, args){
                 return Word.find();
             }
@@ -57,7 +59,7 @@ const RootQuery = new GraphQLObjectType({
 
         //Returns user from test DB
         test: {
-            type: new GraphQLList(TestType),
+            type: new GraphQLList(Types.TestType),
             resolve(parent, args){
                 return Test.find();
                 // const collection = db.get('usercollection');
@@ -66,7 +68,7 @@ const RootQuery = new GraphQLObjectType({
         },
 
         locations: {
-            type: new GraphQLList(LoactionType),
+            type: new GraphQLList(Types.LoactionType),
             resolve(parent, args){
                 return Location.find();
             }
@@ -80,7 +82,7 @@ const Mutation = new GraphQLObjectType({
     fields: {
         // Adds a word to the database.
         addWord:{
-            type: WordType,
+            type: Types.WordType,
             args:{
                 name: {type: new GraphQLNonNull(GraphQLString)},
                 category: {type: GraphQLString},
@@ -97,7 +99,7 @@ const Mutation = new GraphQLObjectType({
         },
         // Deletes a word from the database.
         deleteWord:{
-            type: WordType,
+            type: Types.WordType,
             args:{
                 id: {type: GraphQLString},
             },
@@ -108,7 +110,7 @@ const Mutation = new GraphQLObjectType({
         },
         // Updates a Word
         updateWord:{
-            type: WordType,
+            type: Types.WordType,
             args:{
                 id: {type: new GraphQLNonNull(GraphQLString)},
                 name: {type: GraphQLString},
@@ -122,7 +124,7 @@ const Mutation = new GraphQLObjectType({
             }
         },
         addTest:{
-            type: TestType,
+            type: Types.TestType,
             args:{
                 username: {type: new GraphQLNonNull(GraphQLString)},
                 email: {type: new GraphQLNonNull(GraphQLString)}
@@ -140,7 +142,7 @@ const Mutation = new GraphQLObjectType({
             }
         },
         addLocation: {
-            type: TestType,
+            type: Types.TestType,
             args: {
                 longitude: {type: GraphQLFloat},
                 lattitude: {type: GraphQLFloat},

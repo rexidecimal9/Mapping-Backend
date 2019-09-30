@@ -38,8 +38,11 @@ exports.LoactionType = new GraphQLObjectType({
     fields: () => ({
         id: {type: GraphQLString},
         longitude: {type: GraphQLFloat},
-        lattitude: {type: GraphQLFloat},
+        latitude: {type: GraphQLFloat},
         name: {type: GraphQLString},
         description: {type: GraphQLString},
+        author: {type: GraphQLString},
+        customers: {type: new GraphQLList(GraphQLString)},
+        address: {type: GraphQLString}
     })
 });

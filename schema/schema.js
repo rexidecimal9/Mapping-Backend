@@ -3,12 +3,13 @@
 */
 
 const graphql = require('graphql');
-const Word = require('../models/words');
-const Test = require('../models/test');
-const Location = require('../models/location');
+const Word = require('../collections/words');
+const Test = require('../collections/test');
+const Location = require('../collections/location');
 const Types = require('../Types/Types');
 const IO = require('../Types/IOTypes');
 const express = require('express');
+const sanitize = require('mongo-sanitize');
 // const router = express.Router();
 // var monk = require('monk');
 // const db = monk('localhost:27017/test');
@@ -24,6 +25,7 @@ const{
      GraphQLNonNull,
      GraphQLID,
      GraphQLFloat,
+     GraphQLBoolean
 } = graphql;
 
 //Defines the types of the hero 
@@ -142,23 +144,31 @@ const Mutation = new GraphQLObjectType({
             }
         },
         addLocation: {
-            type: Types.TestType,
+            type: Types.LoactionType,
             args: {
-                longitude: {type: GraphQLFloat},
-                lattitude: {type: GraphQLFloat},
-                name: {type: GraphQLString},
-                description: {type: GraphQLString},
-            },
+                input: {type: IO.addLocation}
+                },
             resolve(parent, args){
                 let location = new Location({
                     id: uuid(),
-                    lattitude: args.lattitude,
-                    longitude: args.longitude,
-                    name: args.name,
-                    description: args.description
+                    latitude: sanitize(args.input.latitude),
+                    longitude: sanitize(args.input.longitude),
+                    name: sanitize(args.input.name),
+                    description: sanitize(args.input.description),
+                    address: sanitize(args.input.address),
+                    customers: sanitize(args.input.customers)
                 });
                 return location.save();
             }
+        },
+
+        deleteLocation: {
+            type: GraphQLBoolean,
+            args:{
+            },
+            async resolve(parent, args){
+                
+            }   
         }
     }
 });

@@ -13,14 +13,15 @@ var monk = require('monk');
 // initialize the db variable as our database, MongoDB does not need to be opened and closed
 // this will not affect performance
 // var db = monk('localhost:27017/mappingDB');
-mongoose.connect('mongodb://localhost:27017/mappingDB', {useNewUrlParser: true});
+// IkPXp46PhTcxGko3
+mongoose.connect('mongodb+srv://SIAdmin:IkPXp46PhTcxGko3@mappingtestcluster-mnocj.gcp.mongodb.net/test', {useNewUrlParser: true});
 mongoose.connection.once('open', () => {
     console.log('Connected to database')
 });
 // The app object is instantiated on creation of the Express server.
 const app = express();
 // Creates permission to let the localhost:4200 have access to the resources of the server.
-app.options('localhost:3000', cors());
+app.options('http://localhost:4200', cors());
 
 // Uses mongoose as the intermediary between GraphQL and MongoDb.
 // Creating a connection the the MongoDB using the URL.

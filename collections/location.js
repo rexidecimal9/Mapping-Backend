@@ -4,9 +4,11 @@ const Schema = mongoose.Schema;
 const locationSchema = new Schema({
     id: String,
     longitude: Number,
-    lattitude: Number,
+    latitude: Number,
     name: String,
     description: String,
+    address: String,
+    customers: [String]
 
 });
 

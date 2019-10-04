@@ -1,15 +1,16 @@
 /*
 * Setting up the server for the backend.
 */
-const express = require('express');
+import express from 'express';
+import jwt from 'express-jwt';
+import cors from 'cors';
+import jwks from 'jwks-rsa';
+import bodyParser from 'body-parser';
 const graphqlHTTP = require('express-graphql');
 const schema = require('./schema/schema');
 const mongoose = require('mongoose');
 var path = require('path');
-const cors = require('cors');
 
-// Monk acts as middleware to the dtabase
-var monk = require('monk');
 // initialize the db variable as our database, MongoDB does not need to be opened and closed
 // this will not affect performance
 // var db = monk('localhost:27017/mappingDB');
@@ -22,7 +23,8 @@ mongoose.connection.once('open', () => {
 const app = express();
 // Creates permission to let the localhost:4200 have access to the resources of the server.
 app.options('http://localhost:4200', cors());
-
+app.use(bodyParser.json);
+app.use(bodyParser.urlencoded({extended: true}));
 // Uses mongoose as the intermediary between GraphQL and MongoDb.
 // Creating a connection the the MongoDB using the URL.
 // The "{useNewUrlParser: true}" parameter is included because the current url string parser is depreciated,
